@@ -13,9 +13,7 @@ public class UserDaoTest {
     public void test1() {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         UserDao userDao = ac.getBean("userDao", UserDao.class);
-        List<User> users = userDao.findAll();
-        for (User user : users) {
-            System.out.println(user);
-        }
+        User user = userDao.findByName("test1");
+        System.out.println(user);
     }
 }
