@@ -3,6 +3,7 @@
 $(function () { //页面载入完毕
     //给登录按钮绑定单击事件处理
     $("#login").click(checkLogin);
+    $("#regist_button").click(registUser);
 })
 //登录处理
 function checkLogin() {
@@ -49,6 +50,70 @@ function checkLogin() {
             },
             error: function () {
                 alert("登录系统异常");
+            }
+        });
+    }
+}
+//注册处理
+function registUser() {
+    //1.获取请求参数
+    var name = $("#regist_username").val().trim();
+    var nick = $("#nickname").val().trim();
+    var password = $("#regist_password").val().trim();
+    var final_password = $("#final_password").val().trim();
+    //2.参数格式校验
+    $("#warning_1 span").html("");
+    $("#warning_2 span").html("");
+    $("#warning_3 span").html("");
+    var flag = true;
+    if (name == "") {
+        flag = false;
+        //jQuery添加CSS闪烁的效果
+        $("#warning_1").show();
+        $("#warning_1 span").html("用户名为空");
+    }
+    if (password == "") {
+        flag = false;
+        //jQuery添加CSS闪烁的效果
+        $("#warning_2").show();
+        $("#warning_2 span").html("密码为空");
+    } else if (password.length < 6) {
+        flag = false;
+        //jQuery添加CSS闪烁的效果
+        $("#warning_2").show();
+        $("#warning_2 span").html("密码长度太短");
+    }
+    if (final_password == "") {
+        flag = false;
+        //jQuery添加CSS闪烁的效果
+        $("#warning_3").show();
+        $("#warning_3 span").html("确认密码为空");
+    } else if (final_password != password) {
+        flag = false;
+        //jQuery添加CSS闪烁的效果
+        $("#warning_3").show();
+        $("#warning_3 span").html("与密码不一致");
+    }
+    //3.发送Ajax
+    if (flag) {
+        $.ajax({
+            url: base_path + "/user/add.do",
+            type: "post",
+            data: {"name": name, "nick": nick, "password": password},
+            dataType: "json",
+            success: function (result) {
+                //如果注册成功，返回登录页面
+                if (result.status == 0) {
+                    alert(result.msg); //提示注册成功
+                    $("#back").click(); //跳转到登录页面
+                } else if (result.status == 1) { //用户名被占用
+                    //jQuery添加CSS闪烁的效果
+                    $("#warning_1").show();
+                    $("#warning_1 span").html(result.msg);
+                }
+            },
+            error: function () {
+                alert("注册系统异常");
             }
         });
     }
