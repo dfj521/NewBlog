@@ -46,15 +46,4 @@ public class User {
     public void setCn_user_nick(String cn_user_nick) {
         this.cn_user_nick = cn_user_nick;
     }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "cn_user_id='" + cn_user_id + '\'' +
-                ", cn_user_name='" + cn_user_name + '\'' +
-                ", cn_user_password='" + cn_user_password + '\'' +
-                ", cn_user_token='" + cn_user_token + '\'' +
-                ", cn_user_nick='" + cn_user_nick + '\'' +
-                '}';
-    }
 }
