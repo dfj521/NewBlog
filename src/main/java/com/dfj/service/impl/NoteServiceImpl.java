@@ -24,4 +24,34 @@ public class NoteServiceImpl implements NoteService {
         noteResult.setData(notes);
         return noteResult;
     }
+
+    @Override
+    public NoteResult loadNote(String noteId) {
+        NoteResult noteResult = new NoteResult();
+        Note note = noteDao.findById(noteId);
+        noteResult.setStatus(0);
+        noteResult.setMsg("查询笔记内容成功");
+        noteResult.setData(note);
+        return noteResult;
+    }
+
+    @Override
+    public NoteResult updateNote(String noteId, String noteTitle, String noteBody) {
+        NoteResult noteResult = new NoteResult();
+        Note note = new Note();
+        note.setCn_note_id(noteId);
+        note.setCn_note_title(noteTitle);
+        note.setCn_note_body(noteBody);
+        //笔记修改时间
+        note.setCn_note_last_modify_time(System.currentTimeMillis());
+        int i = noteDao.updateNote(note);
+        if (i > 0) { //成功
+            noteResult.setStatus(0);
+            noteResult.setMsg("保存笔记成功");
+        } else { //失败
+            noteResult.setStatus(1);
+            noteResult.setMsg("保存笔记失败");
+        }
+        return noteResult;
+    }
 }
