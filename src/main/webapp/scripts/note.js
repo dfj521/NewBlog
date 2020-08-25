@@ -8,7 +8,11 @@ $(function () {
     //4.给"保存笔记"按钮绑定单击事件
     $("#save_note").click(updateNote);
     //5.关闭对话框(对所有的对话框都有效)
-    $("#can").on("click", ".cancle,.close", closeAlertWindow)
+    $("#can").on("click", ".cancle,.close", closeAlertWindow);
+    //8.弹出"创建笔记"对话框dialog模态框
+    $("#add_note").click(alertAddNoteWindow);
+    //9.给新建笔记的创建按钮绑定单击事件
+    $("#can").on("click", "#sure_addnote", addNote);
 });
 //加载用户笔记列表
 function loadNotes() {
@@ -130,4 +134,51 @@ function updateNote() {
             alert("保存笔记异常")
         }
     });
+}
+//创建笔记
+function addNote() {
+    //获取用户id
+    var userId = getCookie("uid");
+    //判断是否登录过时
+    if (userId == null) {
+        window.location.href = "log_in.html";
+        return;
+    }
+    //获取笔记本id
+    var $li = $("#book_ul a.checked").parent();
+    var bookId = $li.data("bookId");
+    //判断是否选择了笔记本
+    if (bookId == null) {
+        alert("请选择笔记本");
+        return;
+    }
+    //获取输入的笔记名称
+    var noteTitle = $("#input_note").val().trim();
+    //判断输入的名称如果为空
+    if (noteTitle == "") {
+        //提示输入为空
+        $("#note_span").html("笔记名称为空");
+        return;
+    }
+    //发送Ajax
+    $.ajax({
+        url: base_path + "/note/add.do",
+        type: "post",
+        data: {"bookId": bookId, "userId": userId, "noteTitle": noteTitle},
+        dataType: "json",
+        success: function (result) {
+            closeAlertWindow();
+            if (result.status == 0) {
+                var noteId = result.data;
+                createNoteLi(noteId, noteTitle);
+                alert(result.msg)
+            } else {
+                alert(result.msg)
+            }
+        },
+        error: function () {
+            alert("创建笔记异常")
+        }
+    });
+
 }

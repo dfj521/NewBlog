@@ -5,4 +5,8 @@ import com.dfj.util.NoteResult;
 public interface BookService {
 
     NoteResult loadUserBooks(String userId);
+
+    NoteResult addBook(String bookName, String userId);
+
+    NoteResult updateBook(String bookId, String bookName);
 }
