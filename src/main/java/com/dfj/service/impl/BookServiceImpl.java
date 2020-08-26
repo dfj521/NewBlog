@@ -51,6 +51,11 @@ public class BookServiceImpl implements BookService {
     @Override
     public NoteResult updateBook(String bookId, String bookName) {
         NoteResult noteResult = new NoteResult();
+        if (bookId == null || bookId.equals("") || bookName == null || bookName.equals("")) {
+            noteResult.setStatus(1);
+            noteResult.setMsg("重命名失败");
+            return noteResult;
+        }
         Book book = new Book();
         book.setCn_notebook_id(bookId);
         book.setCn_notebook_name(bookName);
@@ -61,6 +66,50 @@ public class BookServiceImpl implements BookService {
         } else {
             noteResult.setStatus(1);
             noteResult.setMsg("重命名失败");
+        }
+        return noteResult;
+    }
+
+    @Override
+    public NoteResult deleteBook(String bookId) {
+        NoteResult noteResult = new NoteResult();
+        if (bookId == null || bookId.equals("")) {
+            noteResult.setStatus(1);
+            noteResult.setMsg("删除笔记本失败");
+            return noteResult;
+        }
+        Book book = new Book();
+        book.setCn_notebook_id(bookId);
+        book.setCn_notebook_type_id("2");
+        int i = bookDao.update(book);
+        if (i > 0) {
+            noteResult.setStatus(0);
+            noteResult.setMsg("删除笔记本成功");
+        } else {
+            noteResult.setStatus(1);
+            noteResult.setMsg("删除笔记本失败");
+        }
+        return noteResult;
+    }
+
+    @Override
+    public NoteResult likeBook(String bookId) {
+        NoteResult noteResult = new NoteResult();
+        if (bookId == null || bookId.equals("")) {
+            noteResult.setStatus(1);
+            noteResult.setMsg("收藏笔记本失败");
+            return noteResult;
+        }
+        Book book = new Book();
+        book.setCn_notebook_id(bookId);
+        book.setCn_notebook_type_id("1");
+        int i = bookDao.update(book);
+        if (i > 0) {
+            noteResult.setStatus(0);
+            noteResult.setMsg("收藏笔记本成功");
+        } else {
+            noteResult.setStatus(1);
+            noteResult.setMsg("收藏笔记本失败");
         }
         return noteResult;
     }

@@ -83,4 +83,19 @@ public class Note {
     public void setCn_note_last_modify_time(Long cn_note_last_modify_time) {
         this.cn_note_last_modify_time = cn_note_last_modify_time;
     }
+
+    @Override
+    public String toString() {
+        return "Note{" +
+                "cn_note_id='" + cn_note_id + '\'' +
+                ", cn_notebook_id='" + cn_notebook_id + '\'' +
+                ", cn_user_id='" + cn_user_id + '\'' +
+                ", cn_note_status_id='" + cn_note_status_id + '\'' +
+                ", cn_note_type_id='" + cn_note_type_id + '\'' +
+                ", cn_note_title='" + cn_note_title + '\'' +
+                ", cn_note_body='" + cn_note_body + '\'' +
+                ", cn_note_create_time=" + cn_note_create_time +
+                ", cn_note_last_modify_time=" + cn_note_last_modify_time +
+                '}';
+    }
 }

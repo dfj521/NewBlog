@@ -80,4 +80,49 @@ public class NoteServiceImpl implements NoteService {
         }
         return noteResult;
     }
+
+    @Override
+    public NoteResult deleteNote(String noteId) {
+        NoteResult noteResult = new NoteResult();
+        if (noteId == null || noteId.equals("")) {
+            noteResult.setStatus(1);
+            noteResult.setMsg("删除笔记失败");
+            return noteResult;
+        }
+        Note note = new Note();
+        note.setCn_note_id(noteId);
+        note.setCn_note_status_id("0");
+        note.setCn_note_last_modify_time(System.currentTimeMillis());
+        int i = noteDao.updateNote(note);
+        if (i > 0) {
+            noteResult.setStatus(0);
+            noteResult.setMsg("删除笔记成功");
+        } else {
+            noteResult.setStatus(1);
+            noteResult.setMsg("删除笔记失败");
+        }
+        return noteResult;
+    }
+
+    @Override
+    public NoteResult moveNote(String bookId, String noteId) {
+        NoteResult noteResult = new NoteResult();
+        if (bookId == null || "".equals(bookId) || noteId == null || "".equals(noteId)) {
+            noteResult.setStatus(1);
+            noteResult.setMsg("移动笔记失败");
+            return noteResult;
+        }
+        Note note = new Note();
+        note.setCn_note_id(noteId);
+        note.setCn_notebook_id(bookId);
+        int i = noteDao.updateNote(note);
+        if (i == 1) {
+            noteResult.setStatus(0);
+            noteResult.setMsg("移动笔记成功");
+        } else {
+            noteResult.setStatus(1);
+            noteResult.setMsg("移动笔记失败");
+        }
+        return noteResult;
+    }
 }

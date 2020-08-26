@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface BookDao {
 
-    @Select("select * from cn_notebook where cn_user_id = #{userId}")
+    @Select("select * from cn_notebook where cn_user_id = #{userId} and cn_notebook_type_id != '2'")
     List<Book> findByUserId(String userId);
 
     @Insert("insert into cn_notebook(cn_notebook_id,cn_user_id,cn_notebook_type_id,cn_notebook_name,cn_notebook_createtime) " +

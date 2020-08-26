@@ -9,4 +9,8 @@ public interface BookService {
     NoteResult addBook(String bookName, String userId);
 
     NoteResult updateBook(String bookId, String bookName);
+
+    NoteResult deleteBook(String bookId);
+
+    NoteResult likeBook(String bookId);
 }

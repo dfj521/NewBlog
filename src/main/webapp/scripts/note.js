@@ -13,6 +13,20 @@ $(function () {
     $("#add_note").click(alertAddNoteWindow);
     //9.给新建笔记的创建按钮绑定单击事件
     $("#can").on("click", "#sure_addnote", addNote);
+    //12.弹出笔记菜单
+    $("#note_ul").on("click", ".btn_slide_down", popNoteMenu);
+    //13.点击页面隐藏笔记菜单
+    $("body").click(hideNoteMenu);
+    //14.绑定笔记菜单中的删除按钮
+    $("#note_ul").on("click", ".btn_delete", alertDeleteNoteWindow);
+    //15.给删除笔记按钮绑定单击事件
+    $("#can").on("click", "#sure_deletenote", deleteNote);
+    //16.绑定笔记菜单中的移动至按钮
+    $("#note_ul").on("click", ".btn_move", alertMoveNoteWindow);
+    //17.给移动至按钮绑定单击事件
+    $("#can").on("click", "#sure_movenote", moveNote);
+    //18.给分享按钮绑定单击事件
+    $("#note_ul").on("click", ".btn_share", shareNote);
 });
 //加载用户笔记列表
 function loadNotes() {
@@ -88,6 +102,7 @@ function loadNote() {
                 //设置到编辑区域
                 $("#input_note_title").val(noteTitle);
                 um.setContent(noteBody);
+                return false;
             }
         },
         error: function () {
@@ -181,4 +196,122 @@ function addNote() {
         }
     });
 
+}
+//显示笔记菜单
+function popNoteMenu() {
+    //隐藏所有笔记菜单
+    $("#note_ul div").hide();
+    //获取笔记菜单
+    var $menus = $(this).parent().next();
+    $menus.slideDown(1000);
+    //设置点击下拉设置对应的笔记为选中状态
+    $("#note_ul a").removeClass("checked");
+    $(this).parent().addClass("checked");
+    return false;
+}
+//隐藏笔记菜单
+function hideNoteMenu() {
+    $("#note_ul div").hide();
+}
+//删除笔记
+function deleteNote() {
+    var userId = getCookie("uid");
+    if (userId == null) {
+        window.location.href = "log_in.html";
+        return;
+    }
+    var $li = $("#note_ul a.checked").parent();
+    var noteId = $li.data("noteId");
+    if (noteId == null) {
+        alert("请选择要删除的笔记");
+        return;
+    }
+    $.ajax({
+        url: base_path + "/note/delete.do",
+        type: "post",
+        data: {"noteId": noteId},
+        dataType: "json",
+        success: function (result) {
+            if (result.status == 0) {
+                closeAlertWindow();
+                $li.remove();
+                $("#input_note_title").val("");
+                um.setContent("");
+                alert(result.msg)
+            } else {
+                alert(result.msg)
+            }
+        },
+        error: function () {
+            alert("删除笔记异常")
+        }
+    });
+}
+//移动笔记
+function moveNote() {
+    var userId = getCookie("uid");
+    if (userId == null) {
+        window.location.href = "log_in.html";
+        return;
+    }
+    var bookId = $("#moveSelect").val();
+    if (bookId == "" || bookId == "none") {
+        $("#moveSelect_span").html("请选择笔记本");
+        return;
+    }
+    var $li = $("#note_ul a.checked").parent();
+    var noteId = $li.data("noteId");
+    if (noteId == null) {
+        $("#moveSelect_span").html("请选择笔记");
+        return;
+    }
+    $.ajax({
+        url: base_path + "/note/move.do",
+        type: "post",
+        data: {"bookId": bookId, "noteId": noteId},
+        dataType: "json",
+        success: function (result) {
+            if (result.status == 0) {
+                closeAlertWindow();
+                $li.remove();
+                $("#input_note_title").val("");
+                um.setContent("");
+                alert(result.msg);
+            }
+        },
+        error: function () {
+            alert("移动笔记异常");
+        }
+    });
+}
+//分享笔记
+function shareNote() {
+    var userId = getCookie("uid");
+    if (userId == null) {
+        window.location.href = "log_in.html";
+        return;
+    }
+    var $li = $("#note_ul a.checked").parent();
+    var noteId = $li.data("noteId");
+    if (noteId == null) {
+        $("#moveSelect_span").html("请选择笔记");
+        return;
+    }
+    $.ajax({
+        url: base_path + "/share/add.do",
+        type: "post",
+        data: {"noteId": noteId},
+        dataType: "json",
+        success: function (result) {
+            if (result == 0) {
+                closeAlertWindow();
+                alert(result.msg);
+            } else {
+                alert(result.msg);
+            }
+        },
+        error: function () {
+            alert("分享笔记异常");
+        }
+    });
 }

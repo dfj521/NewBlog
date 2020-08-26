@@ -11,4 +11,8 @@ public interface NoteService {
     NoteResult updateNote(String noteId, String noteTitle, String noteBody);
 
     NoteResult addNote(String bookId, String userId, String noteTitle);
+
+    NoteResult deleteNote(String noteId);
+
+    NoteResult moveNote(String bookId, String noteId);
 }
