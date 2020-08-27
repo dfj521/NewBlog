@@ -7,10 +7,12 @@ import com.dfj.entity.Share;
 import com.dfj.service.ShareService;
 import com.dfj.util.NoteResult;
 import com.dfj.util.NoteUtil;
+import com.dfj.util.PageUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Service
 public class ShareServiceImpl implements ShareService {
@@ -40,7 +42,7 @@ public class ShareServiceImpl implements ShareService {
         note.setCn_note_last_modify_time(System.currentTimeMillis());
         int updateNote = noteDao.updateNote(note);
         if (updateNote != 1) {
-            noteResult.setStatus(1);
+            noteResult.setStatus(2);
             noteResult.setMsg("笔记分享失败");
         }
         Share share = new Share();
@@ -55,6 +57,57 @@ public class ShareServiceImpl implements ShareService {
         } else {
             noteResult.setStatus(1);
             noteResult.setMsg("分享笔记失败");
+        }
+        return noteResult;
+    }
+
+    @Override
+    public NoteResult searchShare(String keyword, Integer page) {
+        NoteResult noteResult = new NoteResult();
+        if (keyword == null || page == null || page < 1) {
+            noteResult.setStatus(2);
+            noteResult.setMsg("搜索分享笔记失败");
+            return noteResult;
+        }
+        PageUtil pageUtil = new PageUtil();
+        pageUtil.setName(keyword);
+        pageUtil.setStart((page - 1) * 18);
+        pageUtil.setCount(18);
+        /*Map<String, Object> map = new HashMap<>();
+        keyword = "%"+keyword+"%";
+        map.put("keyword",keyword);
+        page = (page - 1) * 5;
+        map.put("page",page);*/
+        List<Share> shares = shareDao.search(pageUtil);
+        if (shares != null) {
+            noteResult.setStatus(0);
+            noteResult.setMsg("搜索分享笔记成功");
+            noteResult.setData(shares);
+        } else {
+            noteResult.setStatus(1);
+            noteResult.setMsg("搜索分享笔记失败");
+        }
+        return noteResult;
+    }
+
+    @Override
+    public NoteResult loadShareNote(String shareId) {
+        NoteResult noteResult = new NoteResult();
+        if (shareId == null || "".equals(shareId)) {
+            noteResult.setStatus(2);
+            noteResult.setMsg("加载分享笔记内容失败");
+            return noteResult;
+        }
+        Share oldShare = new Share();
+        oldShare.setCn_share_id(shareId);
+        Share share = shareDao.query(oldShare);
+        if (share != null) {
+            noteResult.setStatus(0);
+            noteResult.setMsg("加载分享笔记内容成功");
+            noteResult.setData(share);
+        } else {
+            noteResult.setStatus(1);
+            noteResult.setMsg("加载分享笔记内容失败");
         }
         return noteResult;
     }

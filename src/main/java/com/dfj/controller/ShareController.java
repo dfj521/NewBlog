@@ -18,4 +18,14 @@ public class ShareController {
     public NoteResult add(String noteId) {
         return shareService.addShare(noteId);
     }
+
+    @RequestMapping("/search.do")
+    public NoteResult search(String keyword, Integer page) {
+        return shareService.searchShare(keyword, page);
+    }
+
+    @RequestMapping("/loadShareNote.do")
+    public NoteResult loadShareNote(String shareId) {
+        return shareService.loadShareNote(shareId);
+    }
 }
